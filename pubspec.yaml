@@ -24,4 +24,4 @@ dev_dependencies:
   very_good_analysis: ^5.0.0
 
 executables:
-  organize:
+  organize: file_organizer_cli
