@@ -1,7 +1,7 @@
 name: file_organizer_cli
-description: A Very Good Project created by Very Good CLI.
+description: select files in a directory and map them
 version: 0.0.1
-publish_to: none
+repository: https://github.com/FMotalleb/file_organizer_cli
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
