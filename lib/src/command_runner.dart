@@ -13,7 +13,8 @@ import 'package:pub_updater/pub_updater.dart';
 
 const executableName = 'file_organizer_cli';
 const packageName = 'file_organizer_cli';
-const description = 'This CLI can be used to organize many files with single command.';
+const description =
+    'This CLI can be used to organize many files with single command.';
 final _sep = Platform.pathSeparator;
 
 /// {@template file_organizer_cli_command_runner}
@@ -35,8 +36,7 @@ class FileOrganizerCliCommandRunner extends CompletionCommandRunner<int> {
     argParser
       ..addOption(
         'matcher',
-        help:
-            '''
+        help: '''
 Regexp to select files in working directory must have groups 
 e.g: "SeriesName\\$_sep.S(?<season>\\d{1,2})E(?<episode>\\d{1,2}).mkv"
 ''',
@@ -44,8 +44,7 @@ e.g: "SeriesName\\$_sep.S(?<season>\\d{1,2})E(?<episode>\\d{1,2}).mkv"
       )
       ..addOption(
         'format',
-        help:
-            '''
+        help: '''
 address of each matched file
 in given example of matcher:
   SeriesName${_sep}S<season>${_sep}E<episode>.mkv
@@ -56,8 +55,7 @@ this may contain absolute path:
       )
       ..addOption(
         'mode',
-        help:
-            '''
+        help: '''
 Using this option you are able to switch between three modes:
   dry(dry-run): will not do anything to files only prints out changes that will be made if you used other options
   move: move files to destination (fast, but if you are not careful you may lose your files)
@@ -161,7 +159,8 @@ Using this option you are able to switch between three modes:
             workingDirectory: workDir,
             logger: _logger,
           ),
-          formatter: Formatter(format: format, pattern: defaultFormatterPattern),
+          formatter:
+              Formatter(format: format, pattern: defaultFormatterPattern),
           selectPattern: RegExp(matcher),
         );
         await organizer.invoke();
