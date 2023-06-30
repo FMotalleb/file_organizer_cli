@@ -1,6 +1,6 @@
-import 'package:file_organizer_cli/src/packages/core/node.dart';
-import 'package:file_organizer_cli/src/packages/node_crawlers/node_crawlers.dart';
-import 'package:file_organizer_cli/src/packages/storages/stack.dart';
+import 'package:file_organizer_cli/src/core/graph/core/node.dart';
+import 'package:file_organizer_cli/src/core/graph/node_crawlers/node_crawlers.dart';
+import 'package:file_organizer_cli/src/core/graph/storages/stack.dart';
 
 typedef _DepthCrawlInfo = ({int depth, INode node});
 

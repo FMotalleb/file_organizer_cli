@@ -1,4 +1,4 @@
-import 'package:file_organizer_cli/src/packages/storages/storage.dart';
+import 'package:file_organizer_cli/src/core/graph/storages/storage.dart';
 
 class Fifo<T> extends Storage<T> {
   Fifo(this._source);

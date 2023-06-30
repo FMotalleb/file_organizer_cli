@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:file_organizer_cli/src/packages/core/tree.dart';
-import 'package:file_organizer_cli/src/packages/node_crawlers/node_crawlers.dart';
+import 'package:file_organizer_cli/src/core/graph/core/tree.dart';
+import 'package:file_organizer_cli/src/core/graph/node_crawlers/node_crawlers.dart';
 import 'package:meta/meta.dart';
 
 abstract class INode extends ITree<INode> {

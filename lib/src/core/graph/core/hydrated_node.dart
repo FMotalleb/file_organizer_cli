@@ -1,4 +1,4 @@
-import 'package:file_organizer_cli/src/packages/core/node.dart';
+import 'package:file_organizer_cli/src/core/graph/core/node.dart';
 
 abstract class IHydratedNode extends INode {
   Future<Map<String, dynamic>> toMap();

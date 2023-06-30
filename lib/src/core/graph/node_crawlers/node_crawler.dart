@@ -1,4 +1,4 @@
-import 'package:file_organizer_cli/src/packages/core/node.dart';
+import 'package:file_organizer_cli/src/core/graph/core/node.dart';
 
 typedef NodeCrawlMethod = Iterator<INode>;
 

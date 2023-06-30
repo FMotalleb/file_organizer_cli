@@ -1,5 +1,5 @@
-import 'package:file_organizer_cli/src/packages/storages/linked_list.dart';
-import 'package:file_organizer_cli/src/packages/storages/storage.dart';
+import 'package:file_organizer_cli/src/core/graph/storages/linked_list.dart';
+import 'package:file_organizer_cli/src/core/graph/storages/storage.dart';
 
 final _noItemError = Exception('No Item In Storage');
 
