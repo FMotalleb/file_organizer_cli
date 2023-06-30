@@ -1,14 +1,20 @@
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
 import 'package:cli_completion/cli_completion.dart';
 import 'package:file_organizer_cli/src/commands/commands.dart';
+import 'package:file_organizer_cli/src/file_organizer/file_system_layer.dart';
+import 'package:file_organizer_cli/src/file_organizer/formatter.dart';
+import 'package:file_organizer_cli/src/file_organizer/organizer.dart';
 import 'package:file_organizer_cli/src/version.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pub_updater/pub_updater.dart';
 
 const executableName = 'file_organizer_cli';
 const packageName = 'file_organizer_cli';
-const description = 'A Very Good Project created by Very Good CLI.';
+const description = 'This CLI can be used to organize many files with single command.';
+final _sep = Platform.pathSeparator;
 
 /// {@template file_organizer_cli_command_runner}
 /// A [CommandRunner] for the CLI.
@@ -27,6 +33,49 @@ class FileOrganizerCliCommandRunner extends CompletionCommandRunner<int> {
         super(executableName, description) {
     // Add root options and flags
     argParser
+      ..addOption(
+        'matcher',
+        help:
+            '''
+Regexp to select files in working directory must have groups 
+e.g: "SeriesName\\$_sep.S(?<season>\\d{1,2})E(?<episode>\\d{1,2}).mkv"
+''',
+        mandatory: true,
+      )
+      ..addOption(
+        'format',
+        help:
+            '''
+address of each matched file
+in given example of matcher:
+  SeriesName${_sep}S<season>${_sep}E<episode>.mkv
+this may contain absolute path:
+  D:${_sep}Series${_sep}SeriesName${_sep}S<season>${_sep}E<episode>.mkv
+''',
+        mandatory: true,
+      )
+      ..addOption(
+        'mode',
+        help:
+            '''
+Using this option you are able to switch between three modes:
+  dry(dry-run): will not do anything to files only prints out changes that will be made if you used other options
+  move: move files to destination (fast, but if you are not careful you may lose your files)
+  copy: only make a copy of file in the destination (slow, but most reliable) 
+''',
+        allowed: [
+          'dry',
+          'move',
+          'copy',
+        ],
+        mandatory: true,
+      )
+      ..addOption(
+        'working-dir',
+        help: 'Sets working directory of the organizer',
+        defaultsTo: Directory.current.path,
+      )
+      ..addSeparator('------------------------------')
       ..addFlag(
         'version',
         abbr: 'v',
@@ -35,13 +84,13 @@ class FileOrganizerCliCommandRunner extends CompletionCommandRunner<int> {
       )
       ..addFlag(
         'verbose',
+        negatable: false,
         help: 'Noisy logging, including all shell commands executed.',
       );
-
     // Add sub commands
 
-    addCommand(SampleCommand(logger: _logger));
-    addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
+    // addCommand(Config(logger: _logger));
+    // addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
   }
 
   @override
@@ -80,12 +129,6 @@ class FileOrganizerCliCommandRunner extends CompletionCommandRunner<int> {
 
   @override
   Future<int?> runCommand(ArgResults topLevelResults) async {
-    // Fast track completion command
-    if (topLevelResults.command?.name == 'completion') {
-      await super.runCommand(topLevelResults);
-      return ExitCode.success.code;
-    }
-
     // Verbose logs
     _logger
       ..detail('Argument information:')
@@ -95,25 +138,38 @@ class FileOrganizerCliCommandRunner extends CompletionCommandRunner<int> {
         _logger.detail('  - $option: ${topLevelResults[option]}');
       }
     }
-    if (topLevelResults.command != null) {
-      final commandResult = topLevelResults.command!;
-      _logger
-        ..detail('  Command: ${commandResult.name}')
-        ..detail('    Command options:');
-      for (final option in commandResult.options) {
-        if (commandResult.wasParsed(option)) {
-          _logger.detail('    - $option: ${commandResult[option]}');
-        }
-      }
-    }
 
     // Run the command or show version
-    final int? exitCode;
+    var exitCode = 0;
+
     if (topLevelResults['version'] == true) {
       _logger.info(packageVersion);
       exitCode = ExitCode.success.code;
     } else {
-      exitCode = await super.runCommand(topLevelResults);
+      try {
+        final mode = switch (topLevelResults['mode']) {
+          'copy' => FileRelocateMode.copy,
+          'move' => FileRelocateMode.move,
+          _ => FileRelocateMode.dryRun,
+        };
+        final workDir = topLevelResults['working-dir'].toString();
+        final format = topLevelResults['format'].toString();
+        final matcher = topLevelResults['matcher'].toString();
+        final organizer = Organizer(
+          fsLayer: FileSystemLayer(
+            relocateMode: mode,
+            workingDirectory: workDir,
+            logger: _logger,
+          ),
+          formatter: Formatter(format: format, pattern: defaultFormatterPattern),
+          selectPattern: RegExp(matcher),
+        );
+        await organizer.invoke();
+        exitCode = 0;
+      } catch (e) {
+        _logger.warn(e.toString());
+        exitCode = await super.runCommand(topLevelResults) ?? 1;
+      }
     }
 
     // Check for updates

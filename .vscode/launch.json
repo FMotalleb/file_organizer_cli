@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "file_organizer_cli",
+            "request": "launch",
+            "program": "bin/file_organizer_cli.dart",
+            "args": [
+                "--matcher",
+                "Supernatural.S(?<season>\\d{1,2})E(?<episode>\\d{1,2}).1080p.6CH.SoftSub.DonyayeSerial.*.mkv",
+                "--mode",
+                "move",
+                "--format",
+                "sup/<season>/<episode>.mkv",
+                "--working-dir",
+                "test_dir"
+            ],
+            "type": "dart"
+        }
+    ]
+}

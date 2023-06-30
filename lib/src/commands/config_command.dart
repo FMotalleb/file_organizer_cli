@@ -6,16 +6,18 @@ import 'package:mason_logger/mason_logger.dart';
 /// `file_organizer_cli sample`
 /// A [Command] to exemplify a sub command
 /// {@endtemplate}
-class SampleCommand extends Command<int> {
+class Config extends Command<int> {
   /// {@macro sample_command}
-  SampleCommand({
+  Config({
     required Logger logger,
   }) : _logger = logger {
-    argParser.addFlag(
-      'cyan',
-      abbr: 'c',
-      help: 'Prints the same joke, but in cyan',
-      negatable: false,
+    argParser.addMultiOption(
+      'mode',
+      allowed: [
+        'dry',
+        'move',
+        'copy',
+      ],
     );
   }
 
